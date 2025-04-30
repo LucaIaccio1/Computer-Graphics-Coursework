@@ -84,7 +84,7 @@ void Model::setupBuffers()
     glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     
-     // Unbind the VAO
+     // Bind the VAO
     glBindVertexArray(0);
 }
 

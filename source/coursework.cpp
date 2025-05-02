@@ -54,7 +54,7 @@ int main(void)
 
     // Open a window and create its OpenGL context
     GLFWwindow* window;
-    window = glfwCreateWindow(1024, 768, "Lab09 Normal Maps", NULL, NULL);
+    window = glfwCreateWindow(1024, 768, "Computer Graphics Coursework Luca", NULL, NULL);
 
     if (window == NULL) {
         fprintf(stderr, "Failed to open GLFW window.\n");
@@ -104,6 +104,7 @@ int main(void)
 
     // Load the textures
     teapot.addTexture("../assets/blue.bmp", "diffuse");
+    teapot.addTexture("../assets/diamond_normal.png", "normal");
 
     // Define teapot object lighting properties
     teapot.ka = 0.2f;
@@ -113,15 +114,21 @@ int main(void)
 
     // Add light sources
     Light lightSources;
-    lightSources.addPointLight(glm::vec3(2.0f, 2.0f, 2.0f),         // position
+    lightSources.addPointLight(glm::vec3(2.0f, 2.0f, 2.0f),         // position white star 
         glm::vec3(1.0f, 1.0f, 1.0f),         // colour
         0.1f, 0.1f, 0.1f);                  // attenuation
 
-    lightSources.addPointLight(glm::vec3(1.0f, 1.0f, -8.0f),        // position
-        glm::vec3(0.0f, 1.0f, 1.0f),         // colour
+    lightSources.addPointLight(glm::vec3(1.0f, 1.0f, -8.0f),        // position  green blue star 
+        glm::vec3(0.0f, 1.0f, 1.0f),         // colour      
         0.1f, 0.1f, 0.1f);                  // attenuation
 
-    lightSources.addSpotLight(glm::vec3(0.0f, 3.0f, 0.0f),          // position
+    lightSources.addSpotLight(glm::vec3(0.0f, 3.0f, 0.0f),          // position white star 
+        glm::vec3(0.0f, -1.0f, 0.0f),         // direction
+        glm::vec3(1.0f, 1.0f, 1.0f),          // colour
+        0.1f, 0.1f, 0.1f,                    // attenuation
+        std::cos(Maths::radians(45.0f)));     // cos(phi)
+
+    lightSources.addSpotLight(glm::vec3(2.0f, 4.0f, 3.0f),          // position white star 
         glm::vec3(0.0f, -1.0f, 0.0f),         // direction
         glm::vec3(1.0f, 1.0f, 1.0f),          // colour
         0.1f, 0.1f, 0.1f,                    // attenuation
@@ -129,6 +136,16 @@ int main(void)
 
     lightSources.addDirectionalLight(glm::vec3(1.0f, 1.0f, 0.0f),  // direction
         glm::vec3(2.0f, 2.0f, 0.0f));  // colour
+    lightSources.addPointLight(glm::vec3(-10.0f, 10.0f, -30.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.2f, 0.05f, 0.01f);
+    lightSources.addPointLight(glm::vec3(15.0f, 15.0f, -10.0f), glm::vec3(0.9f, 0.9f, 1.0f), 0.2f, 0.05f, 0.01f);
+    lightSources.addPointLight(glm::vec3(5.0f, 10.0f, -20.0f), glm::vec3(1.0f, 1.0f, 0.95f), 0.2f, 0.05f, 0.01f);
+    lightSources.addPointLight(glm::vec3(-20.0f, 15.0f, 10.0f), glm::vec3(1.0f, 0.95f, 1.0f), 0.2f, 0.05f, 0.01f);
+    lightSources.addPointLight(glm::vec3(25.0f, 20.0f, 15.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.2f, 0.05f, 0.01f);
+    lightSources.addPointLight(glm::vec3(0.0f, 20.0f, -25.0f), glm::vec3(0.95f, 1.0f, 1.0f), 0.2f, 0.05f, 0.01f);
+    lightSources.addPointLight(glm::vec3(-30.0f, 22.0f, 5.0f), glm::vec3(1.0f, 1.0f, 0.98f), 0.2f, 0.05f, 0.01f);
+    lightSources.addPointLight(glm::vec3(18.0f, 18.0f, -5.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.2f, 0.05f, 0.01f);
+    lightSources.addPointLight(glm::vec3(-12.0f, 33.0f, 12.0f), glm::vec3(0.98f, 0.98f, 1.0f), 0.2f, 0.05f, 0.01f);
+    lightSources.addPointLight(glm::vec3(10.0f, 38.0f, -15.0f), glm::vec3(1.0f, 0.99f, 1.0f), 0.2f, 0.05f, 0.01f);
 
     // Teapot positions
     glm::vec3 teapotPositions[] = {
@@ -141,14 +158,30 @@ int main(void)
         glm::vec3(0.0f, -2.0f, -5.0f),
         glm::vec3(4.0f,  2.0f, -4.0f),
         glm::vec3(2.0f,  0.0f, -2.0f),
-        glm::vec3(-1.0f,  1.0f, -2.0f)
+        glm::vec3(-1.0f,  1.0f, -2.0f),
+        glm::vec3(6.0f,  1.0f, -9.0f),
+        glm::vec3(-6.0f,  2.0f, -12.0f),
+        glm::vec3(3.0f, -1.0f, -7.0f),
+        glm::vec3(-2.0f,  3.0f, -5.0f),
+        glm::vec3(5.0f,  0.0f, -10.0f),
+        glm::vec3(-5.0f,  1.5f, -6.0f),
+        glm::vec3(1.5f,  2.5f, -8.5f),
+        glm::vec3(3.0f,  4.0f, -11.0f),
+        glm::vec3(-3.5f,  0.5f, -9.0f),
+        glm::vec3(0.0f,  3.0f, -13.0f),
+
+        glm::vec3(2.0f,  -3.0f, -6.0f),
+        glm::vec3(-4.0f,  0.0f, -10.0f),
+        glm::vec3(1.0f,   3.5f, -4.0f),
+        glm::vec3(-6.0f, -1.0f, -9.0f),
+        glm::vec3(3.5f,   2.0f, -12.0f),
     };
 
     // Add teapots to objects vector
     std::vector<Object> objects;
     Object object;
     object.name = "teapot";
-    for (unsigned int i = 0; i < 10; i++)
+    for (unsigned int i = 0; i < 24; i++)
     {
         object.position = teapotPositions[i];
         object.rotation = glm::vec3(1.0f, 1.0f, 1.0f);

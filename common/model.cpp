@@ -14,9 +14,12 @@ Model::Model(const char *path)
 {
     // Load object
     bool res = loadObj(path, vertices, uvs, normals);
-    
+
+    // Calculate tangent and bitangent vectors
+    calculateTangents();
     // Setup buffers
     setupBuffers();
+
 }
 
 void Model::draw(unsigned int &shaderID)
@@ -83,7 +86,27 @@ void Model::setupBuffers()
     glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    
+    // Create tangent buffer
+    GLuint tangentBuffer;
+    glGenBuffers(1, &tangentBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, tangentBuffer);
+    glBufferData(GL_ARRAY_BUFFER, tangents.size() * sizeof(glm::vec3), &tangents[0], GL_STATIC_DRAW);
+
+    // Create bitangent buffer
+    GLuint bitangentBuffer;
+    glGenBuffers(1, &bitangentBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, bitangentBuffer);
+    glBufferData(GL_ARRAY_BUFFER, bitangents.size() * sizeof(glm::vec3), &bitangents[0], GL_STATIC_DRAW);
+
+    // Bind the tangent buffer
+    glEnableVertexAttribArray(3);
+    glBindBuffer(GL_ARRAY_BUFFER, tangentBuffer);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    // Bind the bitangent buffer
+    glEnableVertexAttribArray(4);
+    glBindBuffer(GL_ARRAY_BUFFER, bitangentBuffer);
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
      // Unbind the VAO
     glBindVertexArray(0);
 }
@@ -252,4 +275,30 @@ unsigned int Model::loadTexture(const char *path)
     }
 
     return textureID;
+}
+void Model::calculateTangents()
+{
+    for (unsigned int i = 0; i < vertices.size(); i += 3)
+    {
+        // Calculate edge vectors and deltas
+        glm::vec3 E1 = vertices[i + 1] - vertices[i];
+        glm::vec3 E2 = vertices[i + 2] - vertices[i + 1];
+        float deltaU1 = uvs[i + 1].x - uvs[i].x;
+        float deltaV1 = uvs[i + 1].y - uvs[i].y;
+        float deltaU2 = uvs[i + 2].x - uvs[i + 1].x;
+        float deltaV2 = uvs[i + 2].y - uvs[i + 1].y;
+
+        // Calculate tangents
+        float denom = 1.0f / (deltaU1 * deltaV2 - deltaU2 * deltaV1);
+        glm::vec3 tangent = (deltaV2 * E1 - deltaV1 * E2) * denom;
+        glm::vec3 bitangent = (deltaU1 * E2 - deltaU2 * E1) * denom;
+
+        // Set the same tangents for the three vertices of the triangle
+        tangents.push_back(tangent);
+        tangents.push_back(tangent);
+        tangents.push_back(tangent);
+        bitangents.push_back(bitangent);
+        bitangents.push_back(bitangent);
+        bitangents.push_back(bitangent);
+    }
 }

@@ -18,7 +18,7 @@ void mouseInput(GLFWwindow* window);
 // Frame timers
 float previousTime = 0.0f;  // time of previous iteration of the loop
 float deltaTime = 0.0f;  // time elapsed since the previous frame
-
+float rotationSpeed = 20.0f; // degrees per second
 // Create camera object
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -115,16 +115,16 @@ int main(void)
     Light lightSources;
     lightSources.addPointLight(glm::vec3(2.0f, 2.0f, 2.0f),         // position
         glm::vec3(1.0f, 1.0f, 1.0f),         // colour
-        1.0f, 0.1f, 0.1f);                  // attenuation
+        0.1f, 0.1f, 0.1f);                  // attenuation
 
     lightSources.addPointLight(glm::vec3(1.0f, 1.0f, -8.0f),        // position
         glm::vec3(0.0f, 1.0f, 1.0f),         // colour
-        1.0f, 0.1f, 0.1f);                  // attenuation
+        0.1f, 0.1f, 0.1f);                  // attenuation
 
     lightSources.addSpotLight(glm::vec3(0.0f, 3.0f, 0.0f),          // position
         glm::vec3(0.0f, -1.0f, 0.0f),         // direction
         glm::vec3(1.0f, 1.0f, 1.0f),          // colour
-        1.0f, 1.0f, 1.0f,                    // attenuation
+        0.1f, 0.1f, 0.1f,                    // attenuation
         std::cos(Maths::radians(45.0f)));     // cos(phi)
 
     lightSources.addDirectionalLight(glm::vec3(1.0f, 1.0f, 0.0f),  // direction
@@ -186,6 +186,8 @@ int main(void)
         // Loop through objects
         for (unsigned int i = 0; i < static_cast<unsigned int>(objects.size()); i++)
         {
+            objects[i].angle += Maths::radians(rotationSpeed * deltaTime);
+
             // Calculate model matrix
             glm::mat4 translate = Maths::translate(objects[i].position);
             glm::mat4 scale = Maths::scale(objects[i].scale);

@@ -101,10 +101,20 @@ int main(void)
     // Load models
     Model teapot("../assets/teapot.obj");
     Model sphere("../assets/sphere.obj");
+    Model heart("../assets/sphere.obj");
 
     // Load the textures
     teapot.addTexture("../assets/blue.bmp", "diffuse");
     teapot.addTexture("../assets/diamond_normal.png", "normal");
+
+    heart.addTexture("../assets/red.bmp", "diffuse");
+
+    //heart lighting properties
+    heart.ka = 0.3f;
+    heart.kd = 0.6f;
+    heart.ks = 0.8f;
+    heart.Ns = 25.0f;
+
 
     // Define teapot object lighting properties
     teapot.ka = 0.2f;
@@ -114,12 +124,12 @@ int main(void)
 
     // Add light sources
     Light lightSources;
-    lightSources.addPointLight(glm::vec3(2.0f, 2.0f, 2.0f),         // position white star 
-        glm::vec3(1.0f, 1.0f, 1.0f),         // colour
+    lightSources.addPointLight(glm::vec3(2.0f, 1.0f, 2.0f),         // position red star 
+        glm::vec3(10.0f, 0.0f, 0.0f),         // colour
         0.1f, 0.1f, 0.1f);                  // attenuation
 
     lightSources.addPointLight(glm::vec3(1.0f, 1.0f, -8.0f),        // position  green blue star 
-        glm::vec3(0.0f, 1.0f, 1.0f),         // colour      
+        glm::vec3(0.0f, 2.0f, 2.0f),         // colour      
         0.1f, 0.1f, 0.1f);                  // attenuation
 
     lightSources.addSpotLight(glm::vec3(0.0f, 3.0f, 0.0f),          // position white star 
@@ -136,6 +146,8 @@ int main(void)
 
     lightSources.addDirectionalLight(glm::vec3(1.0f, 1.0f, 0.0f),  // direction
         glm::vec3(2.0f, 2.0f, 0.0f));  // colour
+
+    //stars
     lightSources.addPointLight(glm::vec3(-10.0f, 10.0f, -30.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.2f, 0.05f, 0.01f);
     lightSources.addPointLight(glm::vec3(15.0f, 15.0f, -10.0f), glm::vec3(0.9f, 0.9f, 1.0f), 0.2f, 0.05f, 0.01f);
     lightSources.addPointLight(glm::vec3(5.0f, 10.0f, -20.0f), glm::vec3(1.0f, 1.0f, 0.95f), 0.2f, 0.05f, 0.01f);
@@ -177,6 +189,15 @@ int main(void)
         glm::vec3(3.5f,   2.0f, -12.0f),
     };
 
+    // Heart positions
+    glm::vec3 heartPositions[] = {
+    glm::vec3(2.5f,  0.0f, -5.0f),
+    glm::vec3(-3.0f, 1.0f, -7.0f),
+    glm::vec3(4.0f,  0.5f, -10.0f),
+    glm::vec3(0.0f, -1.5f, -8.0f),
+    glm::vec3(-5.0f, -2.0f, -12.0f),
+    };
+
     // Add teapots to objects vector
     std::vector<Object> objects;
     Object object;
@@ -189,6 +210,18 @@ int main(void)
         object.angle = Maths::radians(20.0f * i);
         objects.push_back(object);
     }
+    Object heartObject;
+    heartObject.name = "heart";
+    for (unsigned int i = 0; i < 24; i++)
+    {
+        heartObject.position = heartPositions[i];
+        heartObject.rotation = glm::vec3(1.0f, 1.0f, 1.0f);
+        heartObject.scale = glm::vec3(0.6f, 0.5f, 0.5f);
+        heartObject.angle = Maths::radians(20.0f * i);
+        objects.push_back(heartObject);
+    }
+
+
 
     // Render loop
     while (!glfwWindowShouldClose(window))
@@ -232,10 +265,12 @@ int main(void)
             glm::mat4 MVP = camera.projection * MV;
             glUniformMatrix4fv(glGetUniformLocation(shaderID, "MVP"), 1, GL_FALSE, &MVP[0][0]);
             glUniformMatrix4fv(glGetUniformLocation(shaderID, "MV"), 1, GL_FALSE, &MV[0][0]);
-
             // Draw the model
             if (objects[i].name == "teapot")
                 teapot.draw(shaderID);
+            else if (objects[i].name == "heart")
+                heart.draw(shaderID);
+
         }
 
         // Draw light sources
@@ -248,6 +283,7 @@ int main(void)
 
     // Cleanup
     teapot.deleteBuffers();
+    heart.deleteBuffers();
     glDeleteProgram(shaderID);
 
     // Close OpenGL window and terminate GLFW

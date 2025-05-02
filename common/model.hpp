@@ -21,9 +21,9 @@ public:
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> uvs;
     std::vector<glm::vec3> normals;
-    std::vector<Texture>   textures;
     std::vector<glm::vec3> tangents;
     std::vector<glm::vec3> bitangents;
+    std::vector<Texture>   textures;
     unsigned int textureID;
     float ka, kd, ks, Ns;
     

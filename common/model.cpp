@@ -107,6 +107,7 @@ void Model::setupBuffers()
     glEnableVertexAttribArray(4);
     glBindBuffer(GL_ARRAY_BUFFER, bitangentBuffer);
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
      // Unbind the VAO
     glBindVertexArray(0);
 }

@@ -5,8 +5,7 @@
 // Inputs
 in vec2 UV;
 in vec3 fragmentPosition;
-in vec3 tangentSpaceLightPosition[maxLights];
-in vec3 tangentSpaceLightDirection[maxLights];
+in vec3 Normal;
 
 // Outputs
 out vec3 fragmentColour;
@@ -26,7 +25,6 @@ struct Light
 
 // Uniforms
 uniform sampler2D diffuseMap;
-uniform sampler2D normalMap;
 uniform float ka;
 uniform float kd;
 uniform float ks;
@@ -41,9 +39,6 @@ vec3 spotLight(vec3 lightPosition, vec3 direction, vec3 lightColour,
                float cosPhi, float constant, float linear, float quadratic);
 
 vec3 directionalLight(vec3 lightDirection, vec3 lightColour);
-
-// Get the normal vector from the normal map
-vec3 Normal = normalize(2.0 * vec3(texture(normalMap, UV)) - 1.0);
 
 void main ()
 {

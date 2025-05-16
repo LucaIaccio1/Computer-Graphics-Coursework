@@ -107,7 +107,10 @@ int main(void)
     teapot.addTexture("../assets/blue.bmp", "diffuse");
     teapot.addTexture("../assets/diamond_normal.png", "normal");
 
-    heart.addTexture("../assets/red.bmp", "diffuse");
+    heart.addTexture("../assets/normalMap.PNG", "normal");
+    heart.addTexture("../assets/DisplacementMap.PNG", "Displacement");
+    heart.addTexture("../assets/SpecularMap.PNG", "Specular");
+
 
     //heart lighting properties
     heart.ka = 0.3f;
